@@ -1,0 +1,2 @@
+-keep class com.mediaflix.tv.** { *; }
+-keep class okhttp3.** { *; }

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="#0a0a0a"
+    android:gravity="center">
+
+    <!-- Colonne gauche : titre + dots -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎬 MEDIAFLIX"
+            android:textSize="36sp"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Entrez votre code PIN"
+            android:textSize="18sp"
+            android:textColor="#aaaaaa"
+            android:layout_marginBottom="40dp" />
+
+        <!-- Indicateurs PIN -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="24dp">
+
+            <TextView android:id="@+id/dot1"
+                android:layout_width="48dp" android:layout_height="48dp"
+                android:gravity="center" android:text="○"
+                android:textSize="32sp" android:textColor="#00b4ff"
+                android:layout_marginEnd="12dp" />
+            <TextView android:id="@+id/dot2"
+                android:layout_width="48dp" android:layout_height="48dp"
+                android:gravity="center" android:text="○"
+                android:textSize="32sp" android:textColor="#00b4ff"
+                android:layout_marginEnd="12dp" />
+            <TextView android:id="@+id/dot3"
+                android:layout_width="48dp" android:layout_height="48dp"
+                android:gravity="center" android:text="○"
+                android:textSize="32sp" android:textColor="#00b4ff"
+                android:layout_marginEnd="12dp" />
+            <TextView android:id="@+id/dot4"
+                android:layout_width="48dp" android:layout_height="48dp"
+                android:gravity="center" android:text="○"
+                android:textSize="32sp" android:textColor="#00b4ff" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="16sp"
+            android:textColor="#ff4444"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/loadingView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminateTint="#00b4ff"
+            android:visibility="gone"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
+    <!-- Séparateur -->
+    <View
+        android:layout_width="1dp"
+        android:layout_height="200dp"
+        android:background="#222222"
+        android:layout_marginHorizontal="8dp" />
+
+    <!-- Colonne droite : pavé numérique -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="40dp">
+
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btn1" style="@style/PinButton" android:text="1" />
+            <Button android:id="@+id/btn2" style="@style/PinButton" android:text="2" />
+            <Button android:id="@+id/btn3" style="@style/PinButton" android:text="3" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btn4" style="@style/PinButton" android:text="4" />
+            <Button android:id="@+id/btn5" style="@style/PinButton" android:text="5" />
+            <Button android:id="@+id/btn6" style="@style/PinButton" android:text="6" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btn7" style="@style/PinButton" android:text="7" />
+            <Button android:id="@+id/btn8" style="@style/PinButton" android:text="8" />
+            <Button android:id="@+id/btn9" style="@style/PinButton" android:text="9" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btnDel" style="@style/PinButton" android:text="⌫" android:textColor="#ff8888" />
+            <Button android:id="@+id/btn0" style="@style/PinButton" android:text="0" />
+            <Space android:layout_width="80dp" android:layout_height="80dp" android:layout_margin="8dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
