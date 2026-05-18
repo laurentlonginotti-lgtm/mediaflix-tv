@@ -9,4 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- Conteneur plein écran pour les vidéos -->
+    <FrameLayout
+        android:id="@+id/fullscreenContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:visibility="gone" />
+
 </FrameLayout>
