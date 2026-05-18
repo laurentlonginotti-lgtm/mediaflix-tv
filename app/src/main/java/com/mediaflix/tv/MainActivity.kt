@@ -37,11 +37,19 @@ class MainActivity : AppCompatActivity() {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             useWideViewPort = true
             loadWithOverviewMode = true
-            setSupportZoom(false)
+            // setSupportZoom(false) désactivait le mécanisme interne de focus/clavier
+            // sur certains WebView Android → les inputs ne recevaient plus le focus.
+            // On garde le zoom activé en interne mais on cache les contrôles visuels.
+            setSupportZoom(true)
             builtInZoomControls = false
             displayZoomControls = false
             userAgentString = userAgentString + " MediaflixTV/1.0"
         }
+
+        // Assure que le WebView peut recevoir le focus tactile → inputs focusables
+        webView.isFocusable = true
+        webView.isFocusableInTouchMode = true
+        webView.requestFocus()
 
         CookieManager.getInstance().apply {
             setAcceptCookie(true)
