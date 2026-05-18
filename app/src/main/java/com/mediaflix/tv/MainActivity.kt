@@ -9,6 +9,7 @@ import android.view.WindowManager
 import android.webkit.*
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -62,6 +63,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         // WebChromeClient pour la lecture vidéo HTML5 et le plein écran
+        // Interface JS → retour écran PIN sur déconnexion
+        webView.addJavascriptInterface(object : Any() {
+            @android.webkit.JavascriptInterface
+            fun goToPin() {
+                runOnUiThread {
+                    startActivity(Intent(this@MainActivity, PinActivity::class.java))
+                    finish()
+                }
+            }
+        }, "MediaflixTV")
+
         webView.webChromeClient = object : WebChromeClient() {
             override fun onShowCustomView(view: View, callback: CustomViewCallback) {
                 customView = view
