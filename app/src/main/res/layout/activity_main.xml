@@ -17,4 +17,26 @@
         android:background="#000000"
         android:visibility="gone" />
 
+    <!-- Indicateur de chargement initial -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <!-- Message d'erreur (serveur indisponible) -->
+    <TextView
+        android:id="@+id/errorView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="32dp"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:visibility="gone" />
+
 </FrameLayout>

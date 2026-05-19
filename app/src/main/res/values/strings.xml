@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Mediaflix</string>
+    <string name="error_network">Erreur réseau, vérifie la connexion</string>
+    <string name="error_wrong_pin">PIN incorrect</string>
+    <string name="error_server_unavailable">Serveur indisponible. Appuie sur Retour pour réessayer.</string>
 </resources>

@@ -2,16 +2,21 @@ package com.mediaflix.tv
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.KeyEvent
 import android.view.View
 import android.webkit.CookieManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import org.json.JSONObject
+import java.io.IOException
 
 class PinActivity : AppCompatActivity() {
 
@@ -19,7 +24,15 @@ class PinActivity : AppCompatActivity() {
     private lateinit var dots: List<TextView>
     private lateinit var errorText: TextView
     private lateinit var loadingView: View
-    private val SERVER_URL = "https://flix-mediabox.ddns.net:9443"
+
+    private var isValidating = false
+    private var lastSubmitMs = 0L
+
+    private companion object {
+        const val PIN_LENGTH = 4
+        const val MIN_SUBMIT_INTERVAL_MS = 1000L
+        val JSON_MEDIA = "application/json; charset=utf-8".toMediaType()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,15 +61,17 @@ class PinActivity : AppCompatActivity() {
     }
 
     private fun addDigit(digit: String) {
-        if (pin.length < 4) {
-            pin.append(digit)
-            errorText.visibility = View.INVISIBLE
-            updateDots()
-            if (pin.length == 4) validatePin()
-        }
+        if (isValidating) return
+        if (pin.length >= PIN_LENGTH) return
+
+        pin.append(digit)
+        errorText.visibility = View.INVISIBLE
+        updateDots()
+        if (pin.length == PIN_LENGTH) validatePin()
     }
 
     private fun removeDigit() {
+        if (isValidating) return
         if (pin.isNotEmpty()) {
             pin.deleteCharAt(pin.length - 1)
             updateDots()
@@ -70,36 +85,43 @@ class PinActivity : AppCompatActivity() {
     }
 
     private fun validatePin() {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastSubmitMs < MIN_SUBMIT_INTERVAL_MS) return
+        lastSubmitMs = now
+
+        isValidating = true
         loadingView.visibility = View.VISIBLE
 
-        val body = """{"pin":"$pin"}""".toRequestBody("application/json".toMediaType())
+        val json = JSONObject().put("pin", pin.toString()).toString()
+        val body = json.toRequestBody(JSON_MEDIA)
         val request = Request.Builder()
-            .url("$SERVER_URL/api/pin-login")
+            .url("${Config.SERVER_URL}/api/pin-login")
             .post(body)
             .build()
 
-        OkHttpClient().newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: java.io.IOException) {
-                runOnUiThread { showError("Erreur réseau") }
+        Config.httpClient.newCall(request).enqueue(object : Callback {
+
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread { showError(getString(R.string.error_network)) }
             }
 
             override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    // Injecter les cookies de session dans le WebView
-                    val cookieManager = CookieManager.getInstance()
-                    response.headers.values("Set-Cookie").forEach { cookie ->
-                        cookieManager.setCookie(SERVER_URL, cookie)
+                response.use { resp ->
+                    if (resp.isSuccessful) {
+                        val cm = CookieManager.getInstance()
+                        resp.headers.values("Set-Cookie").forEach { cookie ->
+                            cm.setCookie(Config.SERVER_URL, cookie)
+                        }
+                        cm.flush()
+                        runOnUiThread {
+                            clearPin()
+                            startActivity(Intent(this@PinActivity, MainActivity::class.java))
+                            finish()
+                        }
+                    } else {
+                        runOnUiThread { showError(getString(R.string.error_wrong_pin)) }
                     }
-                    cookieManager.flush()
-
-                    runOnUiThread {
-                        startActivity(Intent(this@PinActivity, MainActivity::class.java))
-                        finish()
-                    }
-                } else {
-                    runOnUiThread { showError("PIN incorrect") }
                 }
-                response.close()
             }
         })
     }
@@ -108,11 +130,15 @@ class PinActivity : AppCompatActivity() {
         loadingView.visibility = View.GONE
         errorText.text = msg
         errorText.visibility = View.VISIBLE
-        pin.clear()
+        clearPin()
+        isValidating = false
+    }
+
+    private fun clearPin() {
+        pin.setLength(0)
         updateDots()
     }
 
-    // Support touches numériques de la télécommande
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         val digit = when (keyCode) {
             KeyEvent.KEYCODE_0, KeyEvent.KEYCODE_NUMPAD_0 -> "0"
