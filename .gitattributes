@@ -1,0 +1,17 @@
+# Force LF line endings for shell scripts (broken on Linux with CRLF)
+gradlew text eol=lf
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Windows scripts keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binaries
+*.jar binary
+*.apk binary
+*.aab binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
