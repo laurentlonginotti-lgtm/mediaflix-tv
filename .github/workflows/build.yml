@@ -19,10 +19,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.2'
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       # Décode le keystore (stocké en secret base64) vers un fichier réel
       - name: Decode keystore
@@ -30,17 +28,17 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           if [ -z "$KEYSTORE_BASE64" ]; then
-            echo "::warning::KEYSTORE_BASE64 secret manquant — build debug only"
+            echo "::warning::KEYSTORE_BASE64 secret manquant — build debug uniquement"
           else
             echo "$KEYSTORE_BASE64" | base64 --decode > "$GITHUB_WORKSPACE/release.jks"
             echo "Keystore décodé : $(stat -c%s release.jks) octets"
           fi
 
-      # Build debug (toujours)
+      # Build debug (toujours) — utilise le wrapper Gradle commité (pas d'action externe fragile)
       - name: Build Debug APK
-        run: gradle assembleDebug
+        run: ./gradlew assembleDebug --no-daemon
 
-      # Build release (seulement si le keystore est présent)
+      # Build release (seulement si le secret existe)
       - name: Build Release APK
         if: ${{ env.KEYSTORE_BASE64 != '' }}
         env:
@@ -49,9 +47,9 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: gradle assembleRelease
+        run: ./gradlew assembleRelease --no-daemon
 
-      # Nettoie le keystore (évite qu'il fuite via un autre step)
+      # Nettoie le keystore même en cas d'échec
       - name: Cleanup keystore
         if: always()
         run: rm -f "$GITHUB_WORKSPACE/release.jks"
