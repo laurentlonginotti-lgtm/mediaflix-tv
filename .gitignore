@@ -1,0 +1,26 @@
+# Build
+build/
+.gradle/
+local.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Keystore et secrets — NE JAMAIS COMMITER
+*.jks
+*.keystore
+*.p12
+keystore.properties
+**/release.jks
+**/release-keystore/
+
+# Logs / OS
+*.log
+.DS_Store
+Thumbs.db
+
+# APK locales (compilées hors CI)
+*.apk
+*.aab

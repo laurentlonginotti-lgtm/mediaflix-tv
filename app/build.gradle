@@ -15,10 +15,27 @@ android {
         versionName "1.0"
     }
 
+    // Signature release pilotée par variables d'environnement
+    // (en local : exporter les vars / en CI : injectées par GitHub Actions)
+    signingConfigs {
+        release {
+            def storeFilePath = System.getenv("KEYSTORE_FILE") ?: "release.jks"
+            storeFile file(storeFilePath)
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: ""
+            keyAlias System.getenv("KEY_ALIAS") ?: "mediaflix"
+            keyPassword System.getenv("KEY_PASSWORD") ?: System.getenv("KEYSTORE_PASSWORD") ?: ""
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // La signature ne s'applique que si la variable d'env existe
+            if (System.getenv("KEYSTORE_PASSWORD")) {
+                signingConfig signingConfigs.release
+            }
         }
         debug {
             debuggable true
