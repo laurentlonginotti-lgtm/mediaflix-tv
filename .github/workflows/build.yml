@@ -22,16 +22,28 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # Décode le keystore (stocké en secret base64) vers un fichier réel
+      # Décode le keystore (stocké en secret base64) vers un fichier réel.
+      # On nettoie d'abord les espaces/retours ligne parasites que le copier-coller
+      # peut introduire dans la valeur du secret.
       - name: Decode keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           if [ -z "$KEYSTORE_BASE64" ]; then
             echo "::warning::KEYSTORE_BASE64 secret manquant — build debug uniquement"
-          else
-            echo "$KEYSTORE_BASE64" | base64 --decode > "$GITHUB_WORKSPACE/release.jks"
-            echo "Keystore décodé : $(stat -c%s release.jks) octets"
+            exit 0
+          fi
+          echo "Longueur du secret base64 reçu : ${#KEYSTORE_BASE64} caractères"
+          printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 -d > "$GITHUB_WORKSPACE/release.jks"
+          if [ ! -s "$GITHUB_WORKSPACE/release.jks" ]; then
+            echo "::error::Le fichier décodé est vide — le secret KEYSTORE_BASE64 est invalide"
+            exit 1
+          fi
+          SIZE=$(stat -c%s "$GITHUB_WORKSPACE/release.jks")
+          echo "Keystore décodé : $SIZE octets"
+          if [ "$SIZE" -lt 1000 ]; then
+            echo "::error::Le keystore décodé fait $SIZE octets (attendu ~2750). Secret tronqué ?"
+            exit 1
           fi
 
       # Build debug (toujours) — utilise le wrapper Gradle commité (pas d'action externe fragile)
