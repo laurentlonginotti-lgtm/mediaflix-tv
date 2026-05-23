@@ -1,4 +1,4 @@
-package com.mediaflix.tv
+﻿package com.mediaflix.tv
 
 import android.net.Uri
 import okhttp3.OkHttpClient
@@ -10,7 +10,8 @@ object Config {
 
     // Domaines externes autorisés depuis l'interface Mediaflix (sites de streaming intégrés)
     private val ALLOWED_EXTERNAL_HOSTS = setOf(
-        "xamoz.com"
+        "xamoz.com",
+        "walalixfr.base44.app"
     )
 
     val httpClient: OkHttpClient by lazy {
