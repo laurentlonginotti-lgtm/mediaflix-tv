@@ -67,10 +67,10 @@ class MainActivity : AppCompatActivity() {
 
         webView.webViewClient = object : WebViewClient() {
 
-            // Filtre de domaine : tout lien hors flix-mediabox.ddns.net est ignoré
+            // Filtre de domaine : autorise Mediaflix + domaines externes whitelistés (Xamoz)
             override fun shouldOverrideUrlLoading(
                 view: WebView, request: WebResourceRequest
-            ): Boolean = !Config.isInternalUrl(request.url?.toString())
+            ): Boolean = !Config.isAllowedUrl(request.url?.toString())
 
             override fun onPageFinished(view: WebView, url: String) {
                 progressBar.visibility = View.GONE
@@ -157,12 +157,17 @@ class MainActivity : AppCompatActivity() {
                 loadServer()
                 return true
             }
-            // 3. Navigation arrière dans la WebView si possible
+            // 3. Si on a navigué hors de Mediaflix (ex: Xamoz), retour direct sur l'accueil
+            if (!Config.isInternalUrl(webView.url)) {
+                loadServer()
+                return true
+            }
+            // 4. Navigation arrière dans la WebView si possible
             if (webView.canGoBack()) {
                 webView.goBack()
                 return true
             }
-            // 4. Sinon, verrouillage → écran PIN
+            // 5. Sinon, verrouillage → écran PIN
             goToPinScreen()
             return true
         }
