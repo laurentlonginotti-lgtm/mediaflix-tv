@@ -10,8 +10,7 @@ object Config {
 
     // Domaines externes autorisés depuis l'interface Mediaflix (sites de streaming intégrés)
     private val ALLOWED_EXTERNAL_HOSTS = setOf(
-        "xamoz.com",
-        "walalixfr.base44.app"
+        "xamoz.com"
     )
 
     val httpClient: OkHttpClient by lazy {
