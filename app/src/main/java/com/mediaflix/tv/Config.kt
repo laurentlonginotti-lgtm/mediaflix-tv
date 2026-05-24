@@ -11,7 +11,10 @@ object Config {
     // Domaines externes autorisés depuis l'interface Mediaflix (sites de streaming intégrés)
     private val ALLOWED_EXTERNAL_HOSTS = setOf(
         "xamoz.com",
-        "walalixfr.base44.app"
+        "walalixfr.base44.app",
+        // Plex Mediaverse : watch.plex.tv (page publique) + plexvideos.com (segments HLS)
+        "plex.tv",
+        "plexvideos.com"
     )
 
     val httpClient: OkHttpClient by lazy {
