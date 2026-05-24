@@ -10,7 +10,11 @@ object Config {
 
     // Domaines externes autorisés depuis l'interface Mediaflix (sites de streaming intégrés)
     private val ALLOWED_EXTERNAL_HOSTS = setOf(
-        "xamoz.com"
+        "xamoz.com",
+        // Rakuten TV (AVOD gratuit FR) + son CDN qui sert les segments
+        "rakuten.tv",
+        "rakuten-tv.com",
+        "cdn77.com"
     )
 
     val httpClient: OkHttpClient by lazy {
