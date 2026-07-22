@@ -5,7 +5,7 @@ import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
 object Config {
-    const val SERVER_URL = "https://flix-mediabox.ddns.net:9443"
+    const val SERVER_URL = "https://flixmediabox.duckdns.org:9443"
     val SERVER_HOST: String = Uri.parse(SERVER_URL).host ?: ""
 
     // Domaines externes autorisés depuis l'interface Mediaflix (sites de streaming intégrés)
